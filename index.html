@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercices de Français | Défi de Maître</title>
+    <style>
+        /* CSS Variabelen voor Dynamische Instellingen */
+        :root {
+            --main-gradient: linear-gradient(135deg, #0f4f9f 0%, #a53000 100%);
+            --base-font-size: 16px;
+            --sidebar-width: 250px;
+            --smooth-transition: 0.4s ease-in-out;
+            --arcade-bg-image: url('image_fcbc5c.png'); 
+        }
+
+        /* --- Liquid Glass CSS Stijlen --- */
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--main-gradient); 
+            color: #f0f0f0; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: var(--base-font-size); 
+            overflow: hidden;
+        }
+        
+        /* HOOFD WRAPPER voor SIDEBAR en CONTENT */
+        #main-wrapper {
+            display: flex;
+            flex-grow: 1;
+            width: 100%;
+            overflow-y: auto;
+            padding-top: 80px; 
+            padding-bottom: 40px; 
+        }
+        
+        /* VASTE HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 0 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50; 
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        /* --- SIDEBAR STYLING --- */
+        #sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            height: 100%; 
+            position: fixed;
+            top: 80px; 
+            left: 0;
+            overflow-y: auto;
+            
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.4); 
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+            
+            transition: transform var(--smooth-transition), box-shadow var(--smooth-transition);
+            z-index: 40;
+            padding: 20px 0;
+        }
+
+        /* Status wanneer de sidebar is ingeklapt */
+        #main-wrapper.sidebar-closed #sidebar {
+            transform: translateX(calc(0px - var(--sidebar-width)));
+            box-shadow: none;
+        }
+        
+        /* SIDEBAR INHOUD */
+        .sidebar-item {
+            display: block;
+            padding: 15px 20px;
+            margin: 10px 10px;
+            text-align: left;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+        }
+
+        /* --- MAIN CONTENT STYLING --- */
+        #main-content {
+            flex-grow: 1;
+            padding: 20px;
+            padding-left: calc(var(--sidebar-width) + 20px); 
+            transition: padding-left var(--smooth-transition); 
+            min-height: calc(100vh - 80px - 40px);
+        }
+        
+        /* Status wanneer de sidebar is ingeklapt */
+        #main-wrapper.sidebar-closed #main-content {
+            padding-left: 20px;
+        }
+
+        /* CONTROLEER HOOFD INHOUDSBLOKKEN VOOR SMOOTH TRANSITION */
+        #content-container > div {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(10px);
+        }
+
+        /* Actieve schermen */
+        #content-container > div[style*="block"] {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Liquid Glass Container (Oefeningen) */
+        .container, .modal-content {
+            width: 100%;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px; 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+            border-right-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
+            text-align: center;
+            color: white; 
+        }
+
+        /* Achtergrond voor Arcade Room */
+        #arcade-room-exo {
+            background-image: var(--arcade-bg-image);
+            background-size: cover;
+            background-position: center;
+            backdrop-filter: none; 
+            -webkit-backdrop-filter: none;
+        }
+        #arcade-room-exo h2, #arcade-room-exo p, #game-stats, #game-area {
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.9);
+        }
+        
+        /* Modale Content */
+         .modal-content {
+            margin: 10% auto; 
+            width: 80%;
+            max-width: 500px;
+         }
+        
+        /* --- MODAL FIX: Vloeiende open/dicht animatie --- */
+        .modal {
+            display: block; 
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            
+            position: fixed;
+            z-index: 20; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding-top: 60px;
+        }
+        
+        /* Zichtbare status */
+        .modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Algemene elementen --- */
+        h2 {
+            color: #ffd700;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid #ffd700;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        .exercice {
+             background: rgba(255, 255, 255, 0.1); 
+             border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Knoppen en Inputs */
+        .question-group input[type="text"],
+        .slider-group select,
+        #game-answer {
+            background: rgba(255, 255, 255, 0.1); 
+            color: white;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+        
+        /* Focus Mode CSS */
+        .question-group input[type="text"]:focus,
+        #game-answer:focus,
+        .slider-group select:focus {
+            outline: none; 
+            border: 1px solid #1e90ff; 
+            box-shadow: 0 0 15px rgba(30, 144, 255, 0.8), 
+                        inset 0 1px 3px rgba(0, 0, 0, 0.4); 
+        }
+        
+        .menu-button, button {
+            background: rgba(255, 255, 255, 0.15); 
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Feedback Stijl */
+        .feedback {
+            font-weight: bold;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .correct {
+            color: #00ff00; 
+            background-color: rgba(0, 100, 0, 0.7); 
+            border: 1px solid #00ff00;
+        }
+        .incorrect {
+            color: #ff4500; 
+            background-color: rgba(139, 0, 0, 0.7); 
+            border: 1px solid #ff4500;
+        }
+
+        /* --- Flashcard Styling --- */
+        #flashcard-container {
+            perspective: 1000px;
+            width: 300px;
+            height: 200px;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+
+        .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-front {
+            background-color: rgba(30, 144, 255, 0.8);
+            color: white;
+            border: 2px solid #1e90ff;
+        }
+
+        .card-back {
+            background-color: rgba(0, 100, 0, 0.8);
+            color: white;
+            transform: rotateY(180deg);
+            border: 2px solid #006400;
+        }
+        
+        /* --- VASTE FOOTER STYLING --- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.3); 
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.3); 
+            z-index: 50; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 0 20px;
+            font-size: 0.9em;
+        }
+        
+        .footer-left {
+            text-align: left;
+            flex-grow: 1;
+        }
+        .footer-right {
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 15px; 
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeSettings()">&times;</span>
+            <h2 style="color: #ffd700; border-bottom-color: #ffd700;">⚙️ Instellingen (Paramètres)</h2>
+            <p style="color: white;">Kies je voorkeuren hieronder.</p>
+            
+            <div class="slider-group">
+                <label for="font-size-slider">Lettergrootte (Tekstgrootte):</label>
+                <input type="range" id="font-size-slider" min="14" max="22" value="16" step="1" oninput="liveUpdateFontSize(this.value)" style="width: 100%;">
+            </div>
+
+            <div class="slider-group">
+                <label for="bg-color-selector">Achtergrondkleur:</label>
+                <select id="bg-color-selector" style="width: 100%; padding: 10px;">
+                    <option value="blue-orange">🌊 Blauw & Oranje (Standaard)</option>
+                    <option value="green-purple">🌿 Groen & Paars</option>
+                    <option value="pink-yellow">💖 Roze & Geel</option>
+                </select>
+            </div>
+            
+            <div class="slider-group">
+                <label for="accent-hint-slider">Accent Hulp (Gele Waarschuwing):</label>
+                <input type="range" id="accent-hint-slider" min="0" max="1" value="1" step="1" style="width: 100%;">
+                <p style="font-size: 0.8em; color: rgba(255, 255, 255, 0.8);">Aan (1): Gele waarschuwing bij ontbrekend accent. Uit (0): Telt als fout.</p>
+            </div>
+            
+            <div class="slider-group">
+                <label for="case-start-slider">Hoofdletter Hulp (Eerste Letter):</label>
+                <input type="range" id="case-start-slider" min="0" max="1" value="1" step="1" style="width: 100%;">
+                <p style="font-size: 0.8em; color: rgba(255, 255, 255, 0.8);">Aan (1): Hoofdletter wordt genegeerd. Uit (0): Hoofdletter is verplicht.</p>
+            </div>
+
+
+            <button onclick="saveAndCloseSettings()" style="width: 100%; margin-top: 20px; background: rgba(255, 255, 255, 0.3); color: white;">Opslaan en Sluiten</button>
+        </div>
+    </div>
+    
+    <header>
+        <div style="display: flex; align-items: center;">
+             <button id="sidebar-toggle-button" onclick="toggleSidebar()">☰</button>
+             <h1>Exercices de Français</h1>
+        </div>
+        <div id="settings-button" onclick="openSettings()">⚙️</div>
+    </header>
+
+    <div id="main-wrapper">
+        
+        <div id="sidebar">
+            <h3 style="margin: 0 10px 15px 10px; color: #ffd700; text-align: center;">Menu Principal</h3>
+            <div class="sidebar-item" onclick="showMenu()">🏡 Accueil (Start)</div>
+            <div class="sidebar-item" onclick="showSubMenu('vocabulaire-menu')">📚 Verbes en -ER</div>
+            <div class="sidebar-item" onclick="startExercice('modern-words')">✨ Mots Modernes</div>
+            <div class="sidebar-item" onclick="showArcadeRoom()">👾 Arcade Room</div>
+        </div>
+
+        <div id="main-content">
+            
+            <div class="container" id="content-container">
+                
+                <div id="start-menu" style="display: block;">
+                    <h2>Bienvenue sur ton Défi de Maître !</h2>
+                    <p>Gebruik de **Sidebar** links om een oefening of de nieuwe Arcade Room te kiezen.</p>
+                    <p style="margin-top: 30px; font-style: italic;">Prêt à relever le défi ? 🔥</p>
+                </div>
+
+                <div id="vocabulaire-menu" class="exercice">
+                    <h2>📚 Vocabulaire : Verbes en -ER</h2>
+                    <p>Kies een oefening.</p>
+                    <button class="menu-button" onclick="startExercice('er-verb-long')">Oefening 1 (12 Vragen)</button>
+                    <button class="menu-button" onclick="startExercice('er-verb-long2')">Oefening 2 (Vertaal de Vorm)</button>
+                    <button class="menu-button" onclick="startFlashcards()">🎴 Flashcards Modus (Oefenen)</button>
+                    
+                    <button onclick="showMenu()" style="margin-top: 25px;">↩️ Terug naar Hoofdmenu</button>
+                </div>
+
+                <div id="er-verb-long-exo" class="exercice">
+                    <h2>📝 Oefening 1 : Verbes du 1er Groupe (-ER)</h2>
+                    <p style="font-style: italic;">**Règle :** Beantwoord de vraag door het werkwoord correct te vervoegen. **Focus op het dikgedrukte subject**.</p>
+                    <p style="padding: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 5px;">**Exemple :** Tu aimes le jazz ? Oui, **j'**aime le jazz.</p>
+                    <hr style="border-top: 1px solid rgba(255, 255, 255, 0.3);">
+
+                    <div class="question-group">
+                        <label>1) Tu restes un mois à Paris ? Oui, <strong>je</strong> (<span style="color:#ffd700;">RESTER</span>) <input type="text" id="er-q1" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>2) Vous étudiez le français ? Oui, <strong>j'</strong>(<span style="color:#ffd700;">ÉTUDIER</span>) <input type="text" id="er-q2" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>3) Nous parlons trop fort ? Oui, <strong>vous</strong> (<span style="color:#ffd700;">PARLER</span>) <input type="text" id="er-q3" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>4) Vous jouez au tennis ? Oui, <strong>on</strong> (<span style="color:#ffd700;">JOUER</span>) <input type="text" id="er-q4" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>5) Je marche trop vite ? Oui, <strong>tu</strong> (<span style="color:#ffd700;">MARCHER</span>) <input type="text" id="er-q5" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>6) Tes parents dînent à huit heures ? Oui, <strong>ils</strong> (<span style="color:#ffd700;">DÎNER</span>) <input type="text" id="er-q6" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>7) Vous déjeunez au restaurant ? Oui, <strong>nous</strong> (<span style="color:#ffd700;">DÉJEUNER</span>) <input type="text" id="er-q7" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>8) Le prof chante bien ? Oui, <strong>il</strong> (<span style="color:#ffd700;">CHANTER</span>) <input type="text" id="er-q8" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>9) Tu regardes le film ? Oui, <strong>je</strong> (<span style="color:#ffd700;">REGARDER</span>) <input type="text" id="er-q9" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>10) Marie et Sophie travaillent ensemble ? Oui, <strong>elles</strong> (<span style="color:#ffd700;">TRAVAILLER</span>) <input type="text" id="er-q10" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>11) J'appelle mes amis ? Oui, <strong>tu</strong> (<span style="color:#ffd700;">APPELER</span>) <input type="text" id="er-q11" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>12) On invite toute la classe ? Oui, <strong>vous</strong> (<span style="color:#ffd700;">INVITER</span>) <input type="text" id="er-q12" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <button onclick="checkAnswer('er-verb-long')">Vérifier les Réponses (Check All)</button>
+                    <div id="feedback-er-verb-long" class="feedback"></div>
+                    <button onclick="showSubMenu('vocabulaire-menu')">Retour naar Oefeningsoverzicht</button>
+                </div>
+                
+                <div id="er-verb-long2-exo" class="exercice">
+                    <h2>📝 Oefening 2 : Vertaal de Persoonlijke Vorm</h2>
+                    <p style="font-style: italic;">**Règle :** Vertaal de vetgedrukte Nederlandse persoonsvorm en schrijf de correcte vervoeging op. **Subject is al inbegrepen!**.</p>
+                    <p style="padding: 5px; background: rgba(255, 255, 255, 0.1); border-radius: 5px;">**Exemple :** Wij vragen (DEMANDER) -> **nous demandons**</p>
+                    <hr style="border-top: 1px solid rgba(255, 255, 255, 0.3);">
+
+                    <div class="question-group">
+                        <label>1) Ik **werk** (TRAVAILLER) -> <input type="text" id="er2-q1" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>2) Jullie **wonen** (HABITER) -> <input type="text" id="er2-q2" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>3) Hij **eet** (MANGER) -> <input type="text" id="er2-q3" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>4) Zij (v) **kijken** (REGARDER) -> <input type="text" id="er2-q4" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>5) Jij **sluit** (FERMER) -> <input type="text" id="er2-q5" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>6) Wij **vinden** (TROUVER) -> <input type="text" id="er2-q6" placeholder="conjugaison..."></label>
+                    </div>
+                    
+                    <div class="question-group">
+                        <label>7) Men **begint** (COMMENCER) -> <input type="text" id="er2-q7" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>8) Zij (m) **verklaren** (EXPLIQUER) -> <input type="text" id="er2-q8" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>9) Ik **roep** (APPELER) -> <input type="text" id="er2-q9" placeholder="conjugaison..."></label>
+                    </div>
+
+                    <div class="question-group">
+                        <label>10) U **bestelt** (COMMANDER) -> <input type="text" id="er2-q10" placeholder="conjugaison..."></label>
+                    </div>
+
+
+                    <button onclick="checkAnswer('er-verb-long2')">Vérifier les Réponses (Check All)</button>
+                    <div id="feedback-er-verb-long2" class="feedback"></div>
+                    <button onclick="showSubMenu('vocabulaire-menu')">Retour naar Oefeningsoverzicht</button>
+                </div>
+                
+                <div id="flashcards-exo" class="exercice">
+                    <h2>🎴 Flashcards Modus</h2>
+                    <p>Klik op de kaart om de vertaling te zien.</p>
+                    
+                    <div id="flashcard-container" class="flashcard" onclick="flipCard()">
+                        <div class="card-inner">
+                            <div class="card-front" id="flashcard-front"></div>
+                            <div class="card-back" id="flashcard-back"></div>
+                        </div>
+                    </div>
+
+                    <button onclick="nextCard(-1)" style="width: 40%; background: rgba(255, 69, 0, 0.4);">◀️ Vorige</button>
+                    <button onclick="nextCard(1)" style="width: 40%; background: rgba(30, 144, 255, 0.4);">Volgende ▶️</button>
+                    
+                    <div style="margin-top: 15px; font-weight: bold; color: white;" id="card-counter">Kaart 1/7</div>
+
+                    <button onclick="showSubMenu('vocabulaire-menu')" style="margin-top: 25px;">Retour naar Oefeningsoverzicht</button>
+                </div>
+
+                <div id="modern-words-exo" class="exercice">
+                     <h2>✨ Exercice : Mots Modernes (New Gen)</h2>
+                     <p>**Question :** Quel mot utilise-t-on voor te zeggen dat iets **trop cool** of **incroyable** is ?</p>
+                     <p>Votre réponse : <input type="text" id="answer-modern-words" placeholder="Un mot de la new gen..."></p>
+                     <button onclick="checkAnswer('modern-words')">Vérifier (Controleer)</button>
+                     <div id="feedback-modern-words" class="feedback"></div>
+                     <button onclick="showMenu()">Terug naar Hoofdmenu</button>
+                </div>
+                
+                <div id="arcade-room-exo" class="exercice">
+                    <h2>👾 De Glimlach: Conjugatie Jacht</h2>
+                    <p>Vervoeg het werkwoord correct. Snelheid is de sleutel!</p>
+                    
+                    <div id="game-stats" style="display:flex; justify-content: space-around; margin-bottom: 20px;">
+                        <div style="font-size: 1.4em; color: #ffd700;">Score: <span id="game-score">0</span></div>
+                        <div style="font-size: 1.4em; color: #1e90ff;">Tijd: <span id="game-timer">10</span>s</div>
+                    </div>
+                    
+                    <div id="game-area" style="min-height: 150px;">
+                        <div id="game-question" style="font-size: 2em; margin: 20px 0; color: white;">
+                            Klaar om te beginnen?
+                        </div>
+                        <div id="game-input-group">
+                             <input type="text" id="game-answer" placeholder="Voer je vervoeging in..." style="width: 70%; max-width: 300px; text-align: center;" disabled>
+                             <button id="game-submit-btn" onclick="checkGameStart()">Start Spel</button>
+                        </div>
+                        <div id="game-feedback" class="feedback" style="margin-top: 15px;"></div>
+                    </div>
+
+                    <button onclick="showMenu()" style="margin-top: 25px;">Terug naar Hoofdmenu</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-left">
+            🇫🇷 Maîtrisez le Français | Défi de Maître 🇫🇷
+        </div>
+        <div class="footer-right">
+            <span id="battery-status"></span>
+            <span id="live-time">00:00:00</span>
+        </div>
+    </footer>
+
+    <script>
+        // GLOBALE INSTELLINGEN VARIABELE (Standaardwaarden)
+        let settings = {
+            showAccentHint: true,
+            ignoreCaseStart: true,
+            fontSize: 16,
+            bgColor: 'blue-orange',
+            sidebarOpen: true 
+        };
+        let currentCardIndex = 0;
+        
+        // --- ARCADE GAME VARIABELEN ---
+        let game = {
+            score: 0,
+            timer: 10,
+            intervalId: null,
+            gameActive: false,
+            currentVerb: null,
+            currentSubject: null
+        };
+
+        // Data voor de Glimlach Conjugatie Jacht
+        const subjects = ['Je', 'Tu', 'Il', 'Elle', 'On', 'Nous', 'Vous', 'Ils', 'Elles'];
+        const verbs = ['aimer', 'parler', 'rester', 'marcher', 'chanter', 'regarder', 'dîner', 'jouer', 'inviter', 'étudier', 'téléphoner', 'travailler'];
+        const verbConjugations = {
+            'je': 'e',
+            'tu': 'es',
+            'il': 'e',
+            'elle': 'e',
+            'on': 'e',
+            'nous': 'ons',
+            'vous': 'ez',
+            'ils': 'ent',
+            'elles': 'ent'
+        };
+        
+        // MAPPING VOOR KLEUREN
+        const colorGradients = {
+            'blue-orange': 'linear-gradient(135deg, #0f4f9f 0%, #a53000 100%)',
+            'green-purple': 'linear-gradient(135deg, #005050 0%, #5a1e9d 100%)',
+            'pink-yellow': 'linear-gradient(135deg, #c44084 0%, #d4a000 100%)'
+        };
+
+        // Oefening 2 Antwoorden (Vertaal de Persoonlijke Vorm)
+        const erVerbLong2Answers = {
+            'er2-q1': 'je travaille',
+            'er2-q2': 'vous habitez',
+            'er2-q3': 'il mange',
+            'er2-q4': 'elles regardent',
+            'er2-q5': 'tu fermes',
+            'er2-q6': 'nous trouvons',
+            'er2-q7': 'on commence',
+            'er2-q8': 'ils expliquent',
+            'er2-q9': 'j\'appelle', // Aandacht voor j'
+            'er2-q10': 'vous commandez'
+        };
+        
+        // --- STATUS UPDATE FUNCTIES (Ongewijzigd) ---
+        function getBatteryInfo() { /* ... code ... */ }
+        function updateBatteryStatus(battery) { /* ... code ... */ }
+        function updateTime() { /* ... code ... */ }
+        function updateStatus() { /* ... code ... */ }
+        
+        // --- LOCAL STORAGE & INSTELLINGEN FUNCTIES (Ongewijzigd) ---
+        function saveState() {
+             try {
+                localStorage.setItem('frenchExoSettings', JSON.stringify(settings));
+                localStorage.setItem('frenchExoCardIndex', currentCardIndex.toString());
+            } catch (e) {
+                console.error("Fout bij opslaan in localStorage:", e);
+            }
+        }
+
+        function loadState() {
+            try {
+                const savedSettings = localStorage.getItem('frenchExoSettings');
+                if (savedSettings) {
+                    const parsedSettings = JSON.parse(savedSettings);
+                    Object.assign(settings, parsedSettings);
+                }
+                
+                const savedIndex = localStorage.getItem('frenchExoCardIndex');
+                if (savedIndex !== null) {
+                    currentCardIndex = parseInt(savedIndex);
+                }
+            } catch (e) {
+                console.warn("Kon gegevens niet laden uit localStorage. Standaardinstellingen gebruikt.");
+            }
+        }
+        
+        function toggleSidebar() {
+            const wrapper = document.getElementById('main-wrapper');
+            settings.sidebarOpen = !settings.sidebarOpen;
+            
+            if (!settings.sidebarOpen) {
+                wrapper.classList.add('sidebar-closed');
+            } else {
+                wrapper.classList.remove('sidebar-closed');
+            }
+            saveState();
+        }
+
+        function applySettings() {
+            const root = document.documentElement;
+            root.style.setProperty('--main-gradient', colorGradients[settings.bgColor]);
+            root.style.setProperty('--base-font-size', `${settings.fontSize}px`);
+
+            const wrapper = document.getElementById('main-wrapper');
+            if (settings.sidebarOpen) {
+                wrapper.classList.remove('sidebar-closed');
+            } else {
+                wrapper.classList.add('sidebar-closed');
+            }
+            // Update UI elements in modal if open
+            const modal = document.getElementById('settings-modal');
+            if (modal.classList.contains('open')) {
+                document.getElementById('accent-hint-slider').value = settings.showAccentHint ? 1 : 0;
+                document.getElementById('case-start-slider').value = settings.ignoreCaseStart ? 1 : 0;
+                document.getElementById('font-size-slider').value = settings.fontSize;
+                document.getElementById('bg-color-selector').value = settings.bgColor;
+            }
+        }
+        
+        function liveUpdateFontSize(value) {
+            document.documentElement.style.setProperty('--base-font-size', `${value}px`);
+        }
+
+        function normalizeText(text) {
+            // Verwijder accenten, zet om naar kleine letters en trim
+            return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        }
+        
+        function openSettings() {
+            applySettings(); 
+            document.getElementById('settings-modal').classList.add('open');
+        }
+
+        function closeSettings() {
+            document.documentElement.style.setProperty('--base-font-size', `${settings.fontSize}px`);
+            document.getElementById('settings-modal').classList.remove('open');
+        }
+        
+        function saveAndCloseSettings() {
+            settings.showAccentHint = (document.getElementById('accent-hint-slider').value === '1');
+            settings.ignoreCaseStart = (document.getElementById('case-start-slider').value === '1');
+            settings.fontSize = parseInt(document.getElementById('font-size-slider').value);
+            settings.bgColor = document.getElementById('bg-color-selector').value;
+
+            saveState();
+
+            applySettings();
+            closeSettings();
+        }
+        // --- EINDE LOCAL STORAGE & INSTELLINGEN FUNCTIES ---
+
+        // --- SCHERM NAVIGATIE ---
+        function showArcadeRoom() {
+            showScreen('arcade-room-exo');
+            // Reset de game als de gebruiker de Arcade Room opent
+            document.getElementById('game-answer').value = '';
+            document.getElementById('game-answer').disabled = true;
+            document.getElementById('game-submit-btn').textContent = 'Start Spel';
+            document.getElementById('game-feedback').innerHTML = '';
+            document.getElementById('game-question').textContent = 'Klaar om te beginnen?';
+            document.getElementById('game-score').textContent = 0;
+            document.getElementById('game-timer').textContent = 10;
+            if (game.intervalId) clearInterval(game.intervalId);
+            game.gameActive = false;
+            game.timer = 10; 
+        }
+        
+        function showScreen(screenId) {
+            const screens = [
+                'start-menu', 
+                'vocabulaire-menu', 
+                'er-verb-long-exo', 
+                'er-verb-long2-exo', 
+                'modern-words-exo', 
+                'flashcards-exo',
+                'arcade-room-exo'
+            ];
+
+            screens.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.style.display = 'none'; 
+                }
+            });
+            
+            const activeScreen = document.getElementById(screenId);
+            if (activeScreen) {
+                activeScreen.style.display = 'block'; 
+            }
+        }
+        
+        function showSubMenu(menuId) {
+            showScreen(menuId);
+        }
+
+        function startExercice(categorie) {
+            showScreen(categorie + '-exo');
+        }
+
+        function showMenu() {
+            showScreen('start-menu');
+
+            // Reset Oefening 1
+            document.getElementById('feedback-er-verb-long').innerHTML = '';
+            for (let i = 1; i <= 12; i++) {
+                let input = document.getElementById('er-q' + i);
+                if (input) input.value = '';
+                if (input) input.style.border = '1px solid rgba(255, 255, 255, 0.4)';
+            }
+            // Reset Oefening 2 (NIEUW)
+            document.getElementById('feedback-er-verb-long2').innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                let input = document.getElementById('er2-q' + i);
+                if (input) input.value = '';
+                if (input) input.style.border = '1px solid rgba(255, 255, 255, 0.4)';
+            }
+        }
+        
+        // --- CHECK ANSWERS LOGICA (Ongewijzigd) ---
+        function checkAnswer(categorie) {
+            let answers;
+            let feedbackId;
+            let totalQuestions;
+            let prefix;
+
+            if (categorie === 'er-verb-long') {
+                answers = {
+                    'er-q1': 'reste', 'er-q2': 'étudie', 'er-q3': 'parlez', 
+                    'er-q4': 'joue', 'er-q5': 'marches', 'er-q6': 'dînent', 
+                    'er-q7': 'déjeunons', 'er-q8': 'chante', 'er-q9': 'regarde', 
+                    'er-q10': 'travaillent', 'er-q11': 'appelles', 'er-q12': 'invitez'
+                };
+                feedbackId = 'feedback-er-verb-long';
+                totalQuestions = 12;
+                prefix = 'er-q';
+            } else if (categorie === 'er-verb-long2') { 
+                 answers = erVerbLong2Answers;
+                 feedbackId = 'feedback-er-verb-long2';
+                 totalQuestions = 10;
+                 prefix = 'er2-q';
+            } else if (categorie === 'modern-words') {
+                // Aparte logica voor enkele antwoordvragen
+                let userAnswer = normalizeText(document.getElementById('answer-modern-words').value);
+                
+                let feedbackDiv = document.getElementById('feedback-modern-words');
+
+                if (userAnswer.includes('style') || userAnswer.includes('styler') || userAnswer.includes('chanme') || userAnswer.includes('ouf')) {
+                    feedbackDiv.className = 'feedback correct';
+                    feedbackDiv.innerHTML = '✅ Correct! **Stylé** is een veelgebruikt modern woord. Andere opties zijn *chanmé* of *ouf*.';
+                } else {
+                    feedbackDiv.className = 'feedback incorrect';
+                    feedbackDiv.innerHTML = '❌ Fout! Het antwoord is vaak **stylé** (letterlijk: gestyled). Probeer het nog eens.';
+                }
+                return;
+            } else {
+                return; 
+            }
+
+            let correctCount = 0;
+            const feedbackDiv = document.getElementById(feedbackId);
+            let incorrectDetails = '';
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const qid = prefix + i;
+                const inputElement = document.getElementById(qid);
+                const expectedAnswer = answers[qid];
+
+                if (!inputElement || !expectedAnswer) continue;
+
+                let userAnswerRaw = inputElement.value.trim();
+                let userAnswerNormalized = normalizeText(userAnswerRaw);
+                let expectedNormalized = normalizeText(expectedAnswer);
+                
+                // Controle op Accent Hulp 
+                let accentIssue = false;
+                if (!settings.showAccentHint && userAnswerNormalized === expectedNormalized && userAnswerRaw !== expectedAnswer) {
+                     accentIssue = true;
+                }
+                
+                // Controle op Hoofdletter Hulp
+                let caseIssue = false;
+                if (!settings.ignoreCaseStart && userAnswerRaw !== expectedAnswer) {
+                    // Check if only case is different
+                    if (userAnswerNormalized === expectedNormalized) {
+                         caseIssue = true;
+                    }
+                }
+
+                if ((userAnswerNormalized === expectedNormalized && !accentIssue) || (settings.ignoreCaseStart && !caseIssue && userAnswerNormalized === expectedNormalized)) {
+                    inputElement.style.border = '2px solid #00ff00'; 
+                    correctCount++;
+                } else {
+                    inputElement.style.border = '2px solid #ff4500'; 
+                    incorrectDetails += `<p>Vraag ${i}: Je antwoord was <span style="color:#ff4500;">**${userAnswerRaw}**</span>. Correct is **${expectedAnswer}**.</p>`;
+                    
+                    if (settings.showAccentHint && userAnswerNormalized === expectedNormalized && userAnswerRaw !== expectedAnswer) {
+                        inputElement.style.border = '2px solid #ffd700'; // Gele hint rand
+                        incorrectDetails += `<p style="color:#ffd700;">Hint: Let op de **accenten** of de exacte schrijfwijze! (${expectedAnswer})</p>`;
+                    }
+                }
+            }
+
+            if (correctCount === totalQuestions) {
+                feedbackDiv.className = 'feedback correct';
+                feedbackDiv.innerHTML = `🌟 Félicitations! Je hebt alle ${totalQuestions} vragen correct beantwoord!`;
+            } else {
+                feedbackDiv.className = 'feedback incorrect';
+                feedbackDiv.innerHTML = `❌ Oei! Je hebt ${correctCount} van de ${totalQuestions} vragen correct.<br>Controleer je antwoorden en probeer opnieuw.<hr style="border-top: 1px solid rgba(255, 255, 255, 0.3); margin: 10px 0;">${incorrectDetails}`;
+            }
+        }
+        
+        // --- FLASHCARD LOGICA (Teruggevoegd) ---
+        const flashcardData = [
+            { front: 'Je reste', back: 'Ik blijf' },
+            { front: 'Tu étudies', back: 'Jij studeert' },
+            { front: 'Nous parlons', back: 'Wij praten' },
+            { front: 'Ils jouent', back: 'Zij spelen' },
+            { front: 'Vous marchez', back: 'Jullie/U loopt' },
+            { front: 'Elles dînent', back: 'Zij (v) dineren' },
+            { front: 'On déjeune', back: 'Men/Wij lunchen' }
+        ];
+
+        function startFlashcards() {
+            showScreen('flashcards-exo');
+            currentCardIndex = 0;
+            loadCard(currentCardIndex);
+            saveState();
+        }
+
+        function loadCard(index) {
+            const card = flashcardData[index];
+            if (!card) return;
+
+            document.getElementById('flashcard-front').textContent = card.front;
+            document.getElementById('flashcard-back').textContent = card.back;
+            document.getElementById('card-counter').textContent = `Kaart ${index + 1}/${flashcardData.length}`;
+            document.getElementById('flashcard-container').classList.remove('flipped');
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard-container').classList.toggle('flipped');
+        }
+
+        function nextCard(step) {
+            currentCardIndex += step;
+            if (currentCardIndex < 0) {
+                currentCardIndex = flashcardData.length - 1;
+            } else if (currentCardIndex >= flashcardData.length) {
+                currentCardIndex = 0;
+            }
+            loadCard(currentCardIndex);
+            saveState();
+        }
+        
+        // --- ARCADE GAME LOGICA (FIXED EN VOLLEDIG) ---
+
+        function getConjugationKey(subject) {
+            if (subject.toLowerCase() === 'j\'') return 'je';
+            return subject.toLowerCase();
+        }
+
+        // Nieuwe functie om te controleren of te starten/checken
+        function checkGameStart() {
+             if (game.gameActive) {
+                 checkGameAnswer();
+             } else {
+                 startGame();
+             }
+        }
+
+        // Functie om het spel te starten
+        function startGame() {
+            if (game.gameActive) return; 
+
+            game.score = 0;
+            game.timer = 10;
+            game.gameActive = true;
+
+            document.getElementById('game-score').textContent = game.score;
+            document.getElementById('game-timer').textContent = game.timer;
+            document.getElementById('game-submit-btn').textContent = 'Controleer';
+            document.getElementById('game-answer').value = '';
+            document.getElementById('game-answer').disabled = false;
+            document.getElementById('game-answer').focus(); 
+            document.getElementById('game-feedback').innerHTML = '';
+            document.getElementById('game-timer').style.color = '#1e90ff';
+
+            newQuestion();
+            
+            // Start de timer
+            game.intervalId = setInterval(updateTimer, 1000);
+            
+            // Voeg de Enter-toetsafhandeling toe
+            document.getElementById('game-answer').addEventListener('keydown', handleEnterKey);
+        }
+
+        // Timer logica
+        function updateTimer() {
+            game.timer--;
+            document.getElementById('game-timer').textContent = game.timer;
+
+            if (game.timer <= 0) {
+                endGame(`⏰ Tijd om! Je eindscore is **${game.score}**!`);
+            } else if (game.timer <= 3) {
+                document.getElementById('game-timer').style.color = 'red';
+            } else {
+                document.getElementById('game-timer').style.color = '#1e90ff';
+            }
+        }
+
+        // Nieuwe vraag genereren
+        function newQuestion() {
+            const randomVerb = verbs[Math.floor(Math.random() * verbs.length)];
+            let randomSubject = subjects[Math.floor(Math.random() * subjects.length)];
+            
+            // Pas het subject aan als het werkwoord met een klinker begint (zoals Aimer)
+            if (randomVerb[0].match(/[aeiou]/i) && randomSubject.toLowerCase() === 'je') {
+                randomSubject = 'J\'';
+            }
+            
+            game.currentVerb = randomVerb;
+            game.currentSubject = randomSubject;
+
+            document.getElementById('game-question').innerHTML = `Vervoeg: **${randomSubject}** (<span style="color:#ffd700;">${randomVerb.toUpperCase()}</span>)`;
+            document.getElementById('game-answer').value = ''; 
+            document.getElementById('game-answer').focus(); 
+        }
+
+        // Controleer het antwoord
+        function checkGameAnswer() {
+            if (!game.gameActive) return;
+
+            const userAnswerRaw = document.getElementById('game-answer').value.trim();
+            const userAnswer = normalizeText(userAnswerRaw);
+            const feedbackDiv = document.getElementById('game-feedback');
+            
+            if (userAnswer === "") {
+                feedbackDiv.className = 'feedback incorrect';
+                feedbackDiv.innerHTML = '❌ Typ een antwoord in!';
+                document.getElementById('game-answer').focus();
+                return;
+            }
+            
+            // Bepaal de verwachte vervoeging
+            const key = getConjugationKey(game.currentSubject);
+            const stam = game.currentVerb.slice(0, -2);
+            const expectedConjugation = stam + verbConjugations[key];
+            const expectedAnswer = normalizeText(expectedConjugation);
+
+            if (userAnswer === expectedAnswer) {
+                // Correct Antwoord
+                game.score++;
+                game.timer += 2; // Geef 2 seconden terug
+                document.getElementById('game-score').textContent = game.score;
+                document.getElementById('game-timer').textContent = game.timer;
+
+                feedbackDiv.className = 'feedback correct';
+                feedbackDiv.innerHTML = `✅ Correct! (+2s)`;
+                
+                newQuestion();
+            } else {
+                // Fout Antwoord
+                game.timer -= 1; // Haal 1 seconde af
+                document.getElementById('game-timer').textContent = game.timer;
+
+                feedbackDiv.className = 'feedback incorrect';
+                feedbackDiv.innerHTML = `❌ Fout! (-1s) Het was: **${expectedConjugation}**`;
+                
+                if (game.timer <= 0) {
+                     endGame(`❌ Fout! Tijd om! Je eindscore is **${game.score}**!`);
+                     return;
+                }
+                
+                newQuestion(); // Ga verder met de volgende vraag
+            }
+        }
+        
+        // Enter-toetsafhandeling voor Arcade
+        function handleEnterKey(event) {
+            if (event.key === 'Enter' && game.gameActive) {
+                event.preventDefault(); // Voorkom standaard formulieractie
+                checkGameAnswer();
+            }
+        }
+
+
+        // Spel beëindigen
+        function endGame(message) {
+            clearInterval(game.intervalId);
+            game.gameActive = false;
+            document.getElementById('game-answer').disabled = true;
+            document.getElementById('game-submit-btn').textContent = 'Speel Opnieuw';
+            document.getElementById('game-feedback').className = 'feedback incorrect';
+            document.getElementById('game-feedback').innerHTML = message;
+            document.getElementById('game-timer').style.color = '#1e90ff';
+            
+            // Verwijder Enter-luisteraar
+            document.getElementById('game-answer').removeEventListener('keydown', handleEnterKey);
+        }
+
+
+        // Zorg ervoor dat alles geladen wordt bij de start
+        window.onload = function() {
+             loadState();
+             applySettings();
+             showScreen('start-menu');
+             getBatteryInfo(); 
+             setInterval(updateStatus, 1000); 
+             
+             // Initialisatie Flashcards
+             if (document.getElementById('flashcards-exo').style.display === 'block') {
+                 loadCard(currentCardIndex);
+             }
+        };
+
+    </script>
+
+</body>
+</html>
